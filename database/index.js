@@ -1,10 +1,10 @@
 const knex = require('knex')({
   client: 'mysql',
   connection: {
-    host: '127.0.0.1',
-    user: 'root',
-    password: '',
-    database: 'monitoring_database'
+    host: 'misaganiawsdb.chywzylq6qnb.ap-southeast-1.rds.amazonaws.com',
+    user: 'misagani',
+    password: 'QBurn8aws',
+    database: 'monitoring_db'
   },
   debug: true
 });
