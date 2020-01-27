@@ -3,12 +3,6 @@ var knex = require('../database');
 var response = require('../core').response;
 var router = express.Router();
 
-function getAverage(arr) {
-  let sum = arr.reduce((previous, current) => (current += previous));
-  let avg = sum / arr.length;
-  return avg;
-}
-
 router.post('/log', async (req, res) => {
   try {
     const {
@@ -57,54 +51,15 @@ router.post('/log', async (req, res) => {
 
 router.get('/log', async (req, res) => {
   try {
-    const data = await knex('log');
-
     const singleData = await knex('log')
       .orderBy('timestamp', 'desc')
       .limit(1);
 
-    console.log(`single => ${singleData[0].cpu_usage}`);
-
-    const arrCpu = [];
-    const arrMemory = [];
-    const arrDrivesA = [];
-    const arrDrivesB = [];
-    const arrNetworkUp = [];
-    const arrNetworkDown = [];
-
-    data.forEach(el => {
-      arrCpu.push(parseFloat(el.cpu_usage));
-      arrMemory.push(parseFloat(el.memory_used_percent));
-      arrDrivesA.push(parseFloat(el.drives_a));
-      arrDrivesB.push(parseFloat(el.drives_b));
-      arrNetworkUp.push(parseFloat(el.network_up));
-      arrNetworkDown.push(parseFloat(el.network_down));
-    });
-
-    const cpuAvg = getAverage(arrCpu);
-    const memAvg = getAverage(arrMemory);
-
-    const avgDriveA = getAverage(arrDrivesA);
-    const avgDriveB = getAverage(arrDrivesB);
-    const avgNetUp = getAverage(arrNetworkUp);
-    const avgNetDown = getAverage(arrNetworkDown);
-
-    var dataJson = {
-      cpu_usage: cpuAvg,
-      memory_used_percent: memAvg,
-      drives_a: avgDriveA,
-      drives_b: avgDriveB,
-      network_up: avgNetUp,
-      network_down: avgNetDown,
-      timestamp: singleData[0].timestamp,
-      uptime: singleData[0].uptime,
-      uptime: singleData[0].uptime,
-      system: singleData[0].system
-    };
-
     res
       .status(200)
-      .json(response.build('Successfully Get Data', 200, 'success', dataJson));
+      .json(
+        response.build('Successfully Get Data', 200, 'success', singleData)
+      );
   } catch (error) {
     console.log(error);
     res
